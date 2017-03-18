@@ -1,0 +1,31 @@
+{
+  "name": "duckumentjs",
+  "version": "0.0.1",
+  "description": "Auto documentation from javascript files",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha \"tests/**/*.spec.js\" --require tests/entry.js"
+  },
+  "keywords": [
+    "documentation",
+    "comments",
+    "docs",
+    "js"
+  ],
+  "author": "Saff Soobratty",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-preset-es2015": "^6.24.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.18.0",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "^3.2.0"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "walk": "^2.3.9"
+  }
+}
