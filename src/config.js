@@ -2,9 +2,17 @@ const fs = require('fs');
 const path = require('path');
 
 class Config {
-  constructor(pathOverride) {
-    this.filePath = pathOverride || path.join(__dirname, '../.duckumentJS');
+  constructor() {
+    this.filePath = path.join(__dirname, '../.duckumentJS');
     this.file = null;
+  }
+
+  setFilePath(pathOverride) {
+    this.filePath = pathOverride;
+  }
+
+  getConfig() {
+    return JSON.parse(this.configFile);
   }
 
   readFile() {
@@ -14,15 +22,11 @@ class Config {
 
         this.configFile = file;
 
-        return resolve(JSON.parse(file));
+        return resolve(this.getConfig());
       });
     });
   }
 
-  getFile() {
-    return this.configFile;
-  }
-
 }
 
-module.exports = Config;
+module.exports = new Config();

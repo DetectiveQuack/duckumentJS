@@ -5,6 +5,7 @@
     "describe": true
   },
   "rules": {
-    "arrow-parens": ["error", "as-needed"]
+    "arrow-parens": ["error", "as-needed"],
+    "class-methods-use-this": "off"
   }
 }

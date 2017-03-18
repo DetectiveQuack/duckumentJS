@@ -4,6 +4,7 @@
   "description": "Auto documentation from javascript files",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint src",
     "test": "mocha \"tests/**/*.spec.js\" --require tests/entry.js"
   },
   "keywords": [
