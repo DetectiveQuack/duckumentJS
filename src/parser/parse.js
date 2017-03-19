@@ -4,7 +4,7 @@ const Tags = require('./tags');
 
 module.exports = (function Parse() {
   let inCommentBlock = false;
-  let block = {
+  const block = {
     description: '',
     tags: []
   };
@@ -28,7 +28,9 @@ module.exports = (function Parse() {
 
     if (!hasKeyTagAtStart && (block.tags.length === 0) && hasText) {
       getDescription(input);
-    } else { }
+    } else {
+      console.log('do something else');
+    }
 
     console.log(block);
   }
