@@ -26,17 +26,21 @@ module.exports = (function Parse() {
 
   function parseCommentBlockByLine(input) {
     const hasKeyTagAtStart = new RegExp(Tags.KEY_LINE_START_TAG_KEY).test(input);
+    const hasBlockCommentEnd = new RegExp(Tags.BLOCK_COMMENT_END).test(input);
+
     const hasText = new RegExp(Tags.TEXT_NUMBERS).test(input);
 
     if (!hasKeyTagAtStart && (block.tags.length === 0) && hasText) {
       getDescription(input);
+    } else if (hasBlockCommentEnd) {
+      // Block comment over sort out block comment
     } else {
-      // console.log('do something else');
+      // Process tags here, get tags from plugins/modules
     }
   }
 
   function end() {
-    // console.log('end');
+    // end of read, handle end of class/file
   }
 
   /**
@@ -65,7 +69,7 @@ module.exports = (function Parse() {
     return new Promise((resolve, reject) => {
       lineReader
         .on('line', input => start(input.trim()))
-        .on('close', () => resolve())
+        .on('close', () => resolve(block))
         .on('error', err => reject(err));
     });
   }
