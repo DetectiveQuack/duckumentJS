@@ -10,24 +10,18 @@ module.exports = (function Tags() {
   const KEY_LINE_START_TAG_KEY = `${KEY_LINE_START}${START_TAG_KEY}`;
 
   // Matches /********
-  const BLOCK_COMMENT_START = new RegExp('^/\\*');
+  const BLOCK_COMMENT_START = /^\/\*/;
 
   // Matches ********/
-  const BLOCK_COMMENT_END = new RegExp('^\\*/');
+  const BLOCK_COMMENT_END = /^\**\//;
 
   const TEXT_NUMBERS = new RegExp(`${KEY_LINE_START}[a-zA-Z0-9]+`);
-
-  const keys = {
-    // matches @author
-    AUTHOR: new RegExp(`${KEY_LINE_START_TAG_KEY}author`)
-  };
 
   return {
     BLOCK_COMMENT_START,
     BLOCK_COMMENT_END,
     KEY_LINE_START,
     KEY_LINE_START_TAG_KEY,
-    TEXT_NUMBERS,
-    keys
+    TEXT_NUMBERS
   };
 }());

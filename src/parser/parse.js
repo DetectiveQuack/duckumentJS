@@ -3,16 +3,18 @@ const fs = require('fs');
 const Tags = require('./tags');
 
 module.exports = (function Parse() {
-  let inCommentBlock = false;
   const block = {
+    className: '',
     description: '',
     tags: []
   };
 
+  let inCommentBlock = false;
+
   /**
    * Parse description block, possibly would be better to have each seciton in its own
    * file, each section may need more logic such as links
-   * @param {*} input
+   * @param {string} input
    */
   function getDescription(input) {
     const descLineSplit = input.split(new RegExp(Tags.KEY_LINE_START));
@@ -29,16 +31,18 @@ module.exports = (function Parse() {
     if (!hasKeyTagAtStart && (block.tags.length === 0) && hasText) {
       getDescription(input);
     } else {
-      console.log('do something else');
+      // console.log('do something else');
     }
-
-    console.log(block);
   }
 
   function end() {
-    console.log('end');
+    // console.log('end');
   }
 
+  /**
+   * Start the parsing process
+   * @param {*} input
+   */
   function start(input) {
     if (!inCommentBlock && Tags.BLOCK_COMMENT_START.test(input)) {
       inCommentBlock = true;
@@ -51,14 +55,18 @@ module.exports = (function Parse() {
     }
   }
 
+  /**
+   * Read the file line by line
+   * @param {*} fileName
+   */
   function parseFile(fileName) {
     const lineReader = readline.createInterface({ input: fs.createReadStream(fileName) });
 
     return new Promise((resolve, reject) => {
       lineReader
-        .on('error', err => reject(err))
         .on('line', input => start(input.trim()))
-        .on('end', () => resolve());
+        .on('close', () => resolve())
+        .on('error', err => reject(err));
     });
   }
 

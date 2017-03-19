@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "fs": "0.0.1-security",
-    "path": "^0.12.7",
-    "walk": "^2.3.9"
+    "node-dir": "^0.1.16",
+    "path": "^0.12.7"
   }
 }
