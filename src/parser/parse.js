@@ -41,10 +41,6 @@ module.exports = (function Parse() {
 
     const cleanLine = removeAsterixFromStart(line);
 
-    if (!cleanLine) {
-      return;
-    }
-
     if (!hasKeyTagAtStart && (Object.keys(currentBlock.tags).length === 0) && hasText) {
       getDescription(cleanLine);
     } else if (!hasBlockCommentStart) {
@@ -55,6 +51,7 @@ module.exports = (function Parse() {
 
   function end() {
     doc.blocks.push(currentBlock);
+
     setCurrentBlock();
     // reset block var (new it)
     // end of read, handle end of class/file
