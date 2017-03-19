@@ -5,11 +5,13 @@ const Parse = require('./../parser/parse');
 module.exports = (function Read() {
   function readFiles() {
     return new Promise((resolve, reject) => {
-      dir.files(Config.getConfig().src, (err, files) => {
-        const promises = files.map(fileName => Parse.parseFile(fileName));
+      dir.readFiles(Config.getConfig().src, { match: /.js$/ }, (err, file, next) => {
+        if (err) return reject(err);
 
-        Promise.all(promises).then(resolve).catch(reject);
-      });
+        Parse.parseFile(file);
+
+        return next();
+      }, () => resolve());
     });
   }
 

@@ -1,46 +1,64 @@
-const readline = require('readline');
-const fs = require('fs');
+const RegExpConstants = require('./regExpConstants');
 const Tags = require('./tags');
 
 module.exports = (function Parse() {
-  const block = {
+  const doc = {
     className: '',
-    description: '',
-    tags: []
+    originalSource: '',
+    blocks: []
   };
 
+  let currentBlock;
+
   let inCommentBlock = false;
+
+  function setCurrentBlock() {
+    currentBlock = {
+      description: '',
+      tags: {}
+    };
+  }
+
+  function removeAsterixFromStart(line) {
+    const lineSplit = line.split(new RegExp(RegExpConstants.KEY_LINE_START));
+
+    return lineSplit.length > 1 ? lineSplit[1] : '';
+  }
 
   /**
    * Parse description block, possibly would be better to have each seciton in its own
    * file, each section may need more logic such as links
    * @param {string} input
    */
-  function getDescription(input) {
-    const descLineSplit = input.split(new RegExp(Tags.KEY_LINE_START));
-
-    if (descLineSplit.length > 0) {
-      block.description += descLineSplit[1];
-    }
+  function getDescription(line) {
+    currentBlock.description += line;
   }
 
-  function parseCommentBlockByLine(input) {
-    const hasKeyTagAtStart = new RegExp(Tags.KEY_LINE_START_TAG_KEY).test(input);
-    const hasBlockCommentEnd = new RegExp(Tags.BLOCK_COMMENT_END).test(input);
+  function parseCommentBlockByLine(line) {
+    const hasKeyTagAtStart = RegExpConstants.KEY_LINE_START_TAG_KEY.test(line);
+    const hasBlockCommentStart = RegExpConstants.BLOCK_COMMENT_START.test(line);
+    const hasText = RegExpConstants.TEXT_NUMBERS.test(line);
 
-    const hasText = new RegExp(Tags.TEXT_NUMBERS).test(input);
+    const cleanLine = removeAsterixFromStart(line);
 
-    if (!hasKeyTagAtStart && (block.tags.length === 0) && hasText) {
-      getDescription(input);
-    } else if (hasBlockCommentEnd) {
-      // Block comment over sort out block comment
-    } else {
+    if (!cleanLine) {
+      return;
+    }
+
+    if (!hasKeyTagAtStart && (Object.keys(currentBlock.tags).length === 0) && hasText) {
+      getDescription(cleanLine);
+    } else if (!hasBlockCommentStart) {
+      Tags.processTags(cleanLine, currentBlock.tags, doc);
       // Process tags here, get tags from plugins/modules
     }
   }
 
   function end() {
+    doc.blocks.push(currentBlock);
+    setCurrentBlock();
+    // reset block var (new it)
     // end of read, handle end of class/file
+    // get function name as this is after comment block
   }
 
   /**
@@ -48,14 +66,14 @@ module.exports = (function Parse() {
    * @param {*} input
    */
   function start(input) {
-    if (!inCommentBlock && Tags.BLOCK_COMMENT_START.test(input)) {
+    if (!inCommentBlock && RegExpConstants.BLOCK_COMMENT_START.test(input)) {
       inCommentBlock = true;
     }
 
-    parseCommentBlockByLine(input);
-
-    if (inCommentBlock && Tags.BLOCK_COMMENT_END.test(input)) {
+    if (inCommentBlock && RegExpConstants.BLOCK_COMMENT_END.test(input)) {
       end();
+    } else {
+      parseCommentBlockByLine(input);
     }
   }
 
@@ -63,15 +81,14 @@ module.exports = (function Parse() {
    * Read the file line by line
    * @param {*} fileName
    */
-  function parseFile(fileName) {
-    const lineReader = readline.createInterface({ input: fs.createReadStream(fileName) });
+  function parseFile(file) {
+    const splitFile = file.split('\n');
 
-    return new Promise((resolve, reject) => {
-      lineReader
-        .on('line', input => start(input.trim()))
-        .on('close', () => resolve(block))
-        .on('error', err => reject(err));
-    });
+    doc.originalSource = file;
+
+    setCurrentBlock();
+
+    splitFile.forEach(line => start(line.trim()));
   }
 
   return {

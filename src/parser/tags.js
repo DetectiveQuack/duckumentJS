@@ -1,27 +1,11 @@
 module.exports = (function Tags() {
-  // Start of key tags
-  const START_TAG_KEY = '@';
+  function processTags(input, block) {
+    console.log(input, block);
 
-  // RegExp for `*      ` this is used for getting the key tags,
-  // as each line will start with an asterix with spaces/tabs
-  const KEY_LINE_START = '\\*\\s*';
-
-  // Start of line RegExp plug the start tag key
-  const KEY_LINE_START_TAG_KEY = `${KEY_LINE_START}${START_TAG_KEY}`;
-
-  // Matches /********
-  const BLOCK_COMMENT_START = /^\/\*/;
-
-  // Matches ********/
-  const BLOCK_COMMENT_END = /^\**\//;
-
-  const TEXT_NUMBERS = new RegExp(`${KEY_LINE_START}[a-zA-Z0-9]+`);
+    // check if tags are already in tags object and whether they are valid tags
+  }
 
   return {
-    BLOCK_COMMENT_START,
-    BLOCK_COMMENT_END,
-    KEY_LINE_START,
-    KEY_LINE_START_TAG_KEY,
-    TEXT_NUMBERS
+    processTags
   };
 }());
