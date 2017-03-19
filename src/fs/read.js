@@ -3,11 +3,10 @@ const fs = require('fs');
 const Config = require('./../config');
 const Parse = require('./../parser/parse');
 
-const walker = walk.walk(Config.getConfig().src);
+module.exports = (function Read() {
+  const walker = walk.walk(Config.getConfig().src);
 
-class Read {
-
-  readFiles() {
+  function readFiles() {
     walker.on('file', (root, fileStats, next) => {
       fs.readFile(fileStats.name, (err, file) => {
         Parse.parseFile(file)
@@ -22,6 +21,7 @@ class Read {
     });
   }
 
-}
-
-module.exports = new Read();
+  return {
+    readFiles
+  };
+}());

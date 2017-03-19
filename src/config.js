@@ -1,32 +1,41 @@
 const fs = require('fs');
-const path = require('path');
 
-class Config {
-  constructor() {
-    this.filePath = path.join(__dirname, '../.duckumentJS');
-    this.file = null;
+module.exports = (function Config() {
+  let filePath;
+  let configFile;
+
+  function setFilePath(pathOverride) {
+    filePath = pathOverride;
   }
 
-  setFilePath(pathOverride) {
-    this.filePath = pathOverride;
+  function getFilePath() {
+    return filePath;
   }
 
-  getConfig() {
-    return JSON.parse(this.configFile);
+  function setConfig(config) {
+    configFile = config;
   }
 
-  readFile() {
+  function getConfig() {
+    return JSON.parse(configFile);
+  }
+
+  function readFile() {
     return new Promise((resolve, reject) => {
-      fs.readFile(this.filePath, (err, file) => {
+      fs.readFile(getFilePath(), (err, file) => {
         if (err) return reject(err);
 
-        this.configFile = file;
-
-        return resolve(this.getConfig());
+        configFile = file;
+        return resolve(getConfig());
       });
     });
   }
 
-}
-
-module.exports = new Config();
+  return {
+    getFilePath,
+    setFilePath,
+    getConfig,
+    setConfig,
+    readFile
+  };
+}());

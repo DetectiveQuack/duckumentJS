@@ -3,5 +3,5 @@ const fs = require('fs');
 
 const Config = require('../src/config');
 
-const configFile = fs.readFileSync(`${__dirname}/.duckumentJS`, 'utf8');
-Config.configFile = configFile;
+const configFile = fs.readFileSync(`${__dirname}/.duckumentrc`, 'utf8');
+Config.setConfig(configFile);

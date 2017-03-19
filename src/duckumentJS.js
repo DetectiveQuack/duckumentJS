@@ -1,11 +1,12 @@
+const path = require('path');
+
 const Config = require('./config');
 const Read = require('./fs/read');
 
-const config = new Config();
-
 class Duckument {
   constructor() {
-    config.readFile()
+    Config.setFilePath(path.join(__dirname, '../.duckumentrc'));
+    Config.readFile()
       .then(() => { Read.readFiles(); });
   }
 }

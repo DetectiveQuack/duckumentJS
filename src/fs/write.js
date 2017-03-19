@@ -1,3 +1,3 @@
 class Write { }
 
-module.exports = new Write();
+module.exports = Write;
