@@ -1,8 +1,24 @@
 module.exports = (function Tags() {
-  function processTags(input, block) {
-    console.log(input);
+  const tags = {
+    processAuthor: (line, tag) => {
+      const name = line.slice(tag.length).trim();
 
-    // check if tags are already in tags object and whether they are valid tags
+      return {
+        tag,
+        name
+      };
+    }
+  };
+
+  function processTags(line, tag) {
+    const tagName = tag.charAt(1).toUpperCase() + tag.slice(2);
+    const processFn = tags[`process${tagName}`];
+
+    if (typeof processFn === 'function') {
+      return processFn(line, tag);
+    }
+
+    return {};
   }
 
   return {

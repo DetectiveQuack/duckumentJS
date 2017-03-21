@@ -15,7 +15,7 @@ module.exports = (function Parse() {
   function setCurrentBlock() {
     currentBlock = {
       description: '',
-      tags: {}
+      tags: []
     };
   }
 
@@ -23,6 +23,32 @@ module.exports = (function Parse() {
     const lineSplit = line.split(new RegExp(RegExpConstants.KEY_LINE_START));
 
     return lineSplit.length > 1 ? lineSplit[1] : '';
+  }
+
+  function processTags(line) {
+    const tag = line.slice(0, line.indexOf(' '));
+
+    if (line.length === 0) {
+      return;
+    }
+
+    let newTag = true;
+
+    if (tag.charAt(0) !== '@') {
+      newTag = false;
+    }
+
+    const processedTag = Tags.processTags(line, tag);
+
+    if (Object.keys(processedTag).length === 0) {
+      return;
+    }
+
+    if (newTag) {
+      currentBlock.tags.push(processedTag);
+    } else {
+      currentBlock.tags[currentBlock.tags.length - 1].description += `\n ${processedTag.description}`;
+    }
   }
 
   /**
@@ -41,10 +67,10 @@ module.exports = (function Parse() {
 
     const cleanLine = removeAsterixFromStart(line);
 
-    if (!hasKeyTagAtStart && (Object.keys(currentBlock.tags).length === 0) && hasText) {
+    if (!hasKeyTagAtStart && (currentBlock.tags.length === 0) && hasText) {
       getDescription(cleanLine);
     } else if (!hasBlockCommentStart) {
-      Tags.processTags(cleanLine, currentBlock.tags, doc);
+      processTags(cleanLine);
       // Process tags here, get tags from plugins/modules
     }
   }
@@ -53,6 +79,7 @@ module.exports = (function Parse() {
     doc.blocks.push(currentBlock);
 
     setCurrentBlock();
+    // console.log(...doc.blocks.map(b => b.tags));
     // reset block var (new it)
     // end of read, handle end of class/file
     // get function name as this is after comment block
