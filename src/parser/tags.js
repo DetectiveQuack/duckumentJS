@@ -1,12 +1,18 @@
 module.exports = (function Tags() {
   const tags = {
     processParam: (line, tag) => {
-      const value = line.slice(tag.length).trim();
-      const type = line.slice(line.indexOf('{') + 1, line.indexOf('}'));
+      const endTypeBracketIndex = line.indexOf('}');
+      const type = line.slice(line.indexOf('{') + 1, endTypeBracketIndex);
+
+      const trimmedLine = line.slice(endTypeBracketIndex + 1).trim();
+
+      const variable = trimmedLine.slice(0, trimmedLine.indexOf(' ')).trim();
+      const value = line.slice(line.indexOf(variable) + variable.length).trim();
 
       return {
         tag,
         type,
+        variable,
         value
       };
     }
