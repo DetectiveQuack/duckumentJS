@@ -1,5 +1,5 @@
 /**
  * Comment block, this is the description
  *
- * @author Author tag
+ * @param {*} myParam This is my param, it does stuff
  */

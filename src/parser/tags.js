@@ -1,11 +1,13 @@
 module.exports = (function Tags() {
   const tags = {
-    processAuthor: (line, tag) => {
-      const name = line.slice(tag.length).trim();
+    processParam: (line, tag) => {
+      const value = line.slice(tag.length).trim();
+      const type = line.slice(line.indexOf('{') + 1, line.indexOf('}'));
 
       return {
         tag,
-        name
+        type,
+        value
       };
     }
   };

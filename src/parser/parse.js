@@ -3,7 +3,8 @@ const Tags = require('./tags');
 
 module.exports = (function Parse() {
   const doc = {
-    className: '',
+    class: '',
+    author: '',
     originalSource: '',
     blocks: []
   };
@@ -12,6 +13,9 @@ module.exports = (function Parse() {
 
   let inCommentBlock = false;
 
+  /**
+   * Reset the current block
+   */
   function setCurrentBlock() {
     currentBlock = {
       description: '',
@@ -19,12 +23,22 @@ module.exports = (function Parse() {
     };
   }
 
+  /**
+   * Remove the asterix from the beginning of the line
+   * @param {*} line
+   */
   function removeAsterixFromStart(line) {
-    const lineSplit = line.split(new RegExp(RegExpConstants.KEY_LINE_START));
+    if (new RegExp(RegExpConstants.KEY_LINE_START).test(line)) {
+      return line.slice(1).trim();
+    }
 
-    return lineSplit.length > 1 ? lineSplit[1] : '';
+    return '';
   }
 
+  /**
+   * Process the line and the tag, populating the current block once processed
+   * @param {*} line
+   */
   function processTags(line) {
     const tag = line.slice(0, line.indexOf(' '));
 
@@ -34,6 +48,7 @@ module.exports = (function Parse() {
 
     let newTag = true;
 
+    // No longer a new tag, most likely a new line
     if (tag.charAt(0) !== '@') {
       newTag = false;
     }
@@ -47,7 +62,8 @@ module.exports = (function Parse() {
     if (newTag) {
       currentBlock.tags.push(processedTag);
     } else {
-      currentBlock.tags[currentBlock.tags.length - 1].description += `\n ${processedTag.description}`;
+      // For the moment add the value to the current tag value
+      currentBlock.tags[currentBlock.tags.length - 1].value += `\n ${processedTag.value}`;
     }
   }
 
@@ -60,6 +76,10 @@ module.exports = (function Parse() {
     currentBlock.description += line;
   }
 
+  /**
+   * Parse the line extracting the tags/description
+   * @param {*} line
+   */
   function parseCommentBlockByLine(line) {
     const hasKeyTagAtStart = RegExpConstants.KEY_LINE_START_TAG_KEY.test(line);
     const hasBlockCommentStart = RegExpConstants.BLOCK_COMMENT_START.test(line);
@@ -75,6 +95,9 @@ module.exports = (function Parse() {
     }
   }
 
+  /**
+   * Perform the cleanup and get the function name if any
+   */
   function end() {
     doc.blocks.push(currentBlock);
 
